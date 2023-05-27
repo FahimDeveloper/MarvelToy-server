@@ -39,6 +39,13 @@ async function run() {
             const catchData = { "seller.email": req.params.email };
             const result = await toysCollection.find(catchData).toArray();
             res.send(result)
+        });
+        app.get('/tabData/:text', async (req, res) => {
+            const tabText = req.params.text;
+            if (tabText === "Iron man" || tabText === "Spider man" || tabText === "Hulk") {
+                const result = await toysCollection.find({ category: tabText }).toArray();
+                res.send(result);
+            }
         })
         app.post('/toys', async (req, res) => {
             const toyInformation = req.body;
