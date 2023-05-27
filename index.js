@@ -28,7 +28,13 @@ async function run() {
         app.get("/allToys", async (req, res) => {
             const result = await toysCollection.find().toArray();
             res.send(result)
-        })
+        });
+        app.get('/toys/:id', async (req, res) => {
+            const id = req.params.id;
+            const catchData = { _id: new ObjectId(id) };
+            const result = await toysCollection.findOne(catchData);
+            res.send(result)
+        });
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
