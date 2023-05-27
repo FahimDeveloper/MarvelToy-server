@@ -46,6 +46,16 @@ async function run() {
                 const result = await toysCollection.find({ category: tabText }).toArray();
                 res.send(result);
             }
+        });
+        app.get('/searchToys/:text', async (req, res) => {
+            const searchText = req.params.text;
+            const result = await toysCollection.find({
+                $or: [
+                    { toyname: { $regex: searchText, $options: "i" } },
+                    { category: { $regex: searchText, $options: "i" } },
+                ],
+            }).toArray();
+            res.send(result)
         })
         app.post('/toys', async (req, res) => {
             const toyInformation = req.body;
