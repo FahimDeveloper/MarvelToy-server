@@ -35,6 +35,11 @@ async function run() {
             const result = await toysCollection.findOne(catchData);
             res.send(result)
         });
+        app.post('/toys', async (req, res) => {
+            const toyInformation = req.body;
+            const result = await toysCollection.insertOne(toyInformation);
+            res.send(result)
+        });
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
