@@ -29,6 +29,16 @@ async function run() {
             const result = await toysCollection.find().toArray();
             res.send(result)
         });
+        app.get('/sellerToys/lowToHigh/:email', async (req, res) => {
+            const email = req.params.email;
+            const result = await toysCollection.find({ "seller.email": email }).sort({ price: -1 }).toArray();
+            res.send(result);
+        });
+        app.get('/sellerToys/highToLow/:email', async (req, res) => {
+            const email = req.params.email;
+            const result = await toysCollection.find({ "seller.email": email }).sort({ price: 1 }).toArray();
+            res.send(result);
+        });
         app.get('/toys/:id', async (req, res) => {
             const id = req.params.id;
             const catchData = { _id: new ObjectId(id) };
