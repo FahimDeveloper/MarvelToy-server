@@ -22,7 +22,7 @@ const client = new MongoClient(uri, {
 
 async function run() {
     try {
-        await client.connect();
+        client.connect();
         // Send a ping to confirm a successful connection
         const toysCollection = client.db("toysCollection").collection('toys');
         app.get("/allToys", async (req, res) => {
@@ -31,12 +31,12 @@ async function run() {
         });
         app.get('/sellerToys/lowToHigh/:email', async (req, res) => {
             const email = req.params.email;
-            const result = await toysCollection.find({ "seller.email": email }).sort({ price: -1 }).toArray();
+            const result = await toysCollection.find({ "seller.email": email }).sort({ price: 1 }).toArray();
             res.send(result);
         });
         app.get('/sellerToys/highToLow/:email', async (req, res) => {
             const email = req.params.email;
-            const result = await toysCollection.find({ "seller.email": email }).sort({ price: 1 }).toArray();
+            const result = await toysCollection.find({ "seller.email": email }).sort({ price: -1 }).toArray();
             res.send(result);
         });
         app.get('/toys/:id', async (req, res) => {
@@ -52,7 +52,7 @@ async function run() {
         });
         app.get('/tabData/:text', async (req, res) => {
             const tabText = req.params.text;
-            if (tabText === "iron-man" || tabText === "spider-man" || tabText === "black-panther") {
+            if (tabText === "ironMan" || tabText === "spiderMan" || tabText === "blackPanther") {
                 const result = await toysCollection.find({
                     $or: [
                         { category: { $regex: tabText } }
@@ -61,13 +61,23 @@ async function run() {
                 res.send(result);
             }
         });
-        app.get('/searchToys/:text', async (req, res) => {
+        app.get('/searchToys/:text/', async (req, res) => {
             const searchText = req.params.text;
             const result = await toysCollection.find({
                 $or: [
-                    { toyname: { $regex: searchText, $options: "i" } },
-                    { category: { $regex: searchText, $options: "i" } },
+                    { toyname: { $regex: searchText, $options: "i" } }
                 ],
+            }).toArray();
+            res.send(result)
+        })
+        app.get('/searchToys/:text/:email', async (req, res) => {
+            const searchText = req.params.text;
+            const email = req.params.email;
+            const result = await toysCollection.find({
+                "seller.email": email,
+                $or: [
+                    { toyname: { $regex: searchText, $options: "i" } }
+                ]
             }).toArray();
             res.send(result)
         })
