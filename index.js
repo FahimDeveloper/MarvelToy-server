@@ -42,8 +42,12 @@ async function run() {
         });
         app.get('/tabData/:text', async (req, res) => {
             const tabText = req.params.text;
-            if (tabText === "Iron man" || tabText === "Spider man" || tabText === "Hulk") {
-                const result = await toysCollection.find({ category: tabText }).toArray();
+            if (tabText === "iron-man" || tabText === "spider-man" || tabText === "black-panther") {
+                const result = await toysCollection.find({
+                    $or: [
+                        { category: { $regex: tabText } }
+                    ],
+                }).toArray();
                 res.send(result);
             }
         });
