@@ -45,6 +45,13 @@ async function run() {
             const result = await toysCollection.findOne(catchData);
             res.send(result)
         });
+        app.get('/toys/:id/:email', async (req, res) => {
+            const id = req.params.id;
+            email = req.params.email;
+            const catchData = { _id: new ObjectId(id), "seller.email": email };
+            const result = await toysCollection.findOne(catchData);
+            res.send(result)
+        });
         app.get('/sellerToys/:email', async (req, res) => {
             const catchData = { "seller.email": req.params.email };
             const result = await toysCollection.find(catchData).toArray();
