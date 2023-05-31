@@ -53,8 +53,11 @@ async function run() {
             res.send(result)
         });
         app.get('/sellerToys/:email', async (req, res) => {
+            const page = parseInt(req.query.page) || 0;
+            const limit = parseInt(req.query.limit) || 20;
+            const skip = page * limit;
             const catchData = { "seller.email": req.params.email };
-            const result = await toysCollection.find(catchData).toArray();
+            const result = await toysCollection.find(catchData).skip(skip).limit(limit).toArray();
             res.send(result)
         });
         app.get('/tabData/:text', async (req, res) => {
@@ -70,13 +73,16 @@ async function run() {
         });
         app.get('/searchToys/:text/', async (req, res) => {
             const searchText = req.params.text;
+            const page = parseInt(req.query.page) || 0;
+            const limit = parseInt(req.query.limit) || 20;
+            const skip = page * limit;
             const result = await toysCollection.find({
                 $or: [
                     { toyname: { $regex: searchText, $options: "i" } }
                 ],
-            }).toArray();
+            }).skip(skip).limit(limit).toArray();
             res.send(result)
-        })
+        });
         app.get('/searchToys/:text/:email', async (req, res) => {
             const searchText = req.params.text;
             const email = req.params.email;
@@ -87,6 +93,11 @@ async function run() {
                 ]
             }).toArray();
             res.send(result)
+        });
+        app.get('/totalToy/:email', async (req, res) => {
+            const email = req.params.email
+            const result = await toysCollection.countDocuments({ 'seller.email': email });
+            res.send({ total: result })
         })
         app.post('/toys', async (req, res) => {
             const toyInformation = req.body;
@@ -104,13 +115,13 @@ async function run() {
             const options = { upsert: true };
             const result = await toysCollection.updateOne(filter, updateDoc, options);
             res.send(result);
-        })
+        });
         app.delete("/toys/:id", async (req, res) => {
             const id = req.params.id;
             const catchData = { _id: new ObjectId(id) };
             const result = await toysCollection.deleteOne(catchData);
             res.send(result);
-        })
+        });
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
