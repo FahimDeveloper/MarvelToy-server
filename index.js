@@ -29,6 +29,13 @@ async function run() {
             const result = await toysCollection.find().toArray();
             res.send(result)
         });
+        app.get('/holeToys', async (req, res) => {
+            const page = parseInt(req.query.page) || 0;
+            const limit = parseInt(req.query.limit) || 20;
+            const skip = page * limit;
+            const result = await toysCollection.find().skip(skip).limit(limit).toArray();
+            res.send(result)
+        })
         app.get('/sellerToys/lowToHigh/:email', async (req, res) => {
             const email = req.params.email;
             const result = await toysCollection.find({ "seller.email": email }).sort({ price: 1 }).toArray();
@@ -94,6 +101,10 @@ async function run() {
             }).toArray();
             res.send(result)
         });
+        app.get('/totalToy', async (req, res) => {
+            const result = await toysCollection.countDocuments();
+            res.send({ total: result })
+        })
         app.get('/totalToy/:email', async (req, res) => {
             const email = req.params.email
             const result = await toysCollection.countDocuments({ 'seller.email': email });
