@@ -22,7 +22,7 @@ const client = new MongoClient(uri, {
 
 async function run() {
     try {
-        client.connect();
+        // await client.connect();
         // Send a ping to confirm a successful connection
         const toysCollection = client.db("toysCollection").collection('toys');
         app.get("/allToys", async (req, res) => {
